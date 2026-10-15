@@ -9,6 +9,7 @@ test("all sections render without horizontal overflow or runtime errors", async 
     ["/products", "Товары"],
     ["/messages", "Сообщения"],
     ["/assistant", "AI-ассистент"],
+    ["/seller", "AI-продавец"],
     ["/settings", "Настройки"],
   ]) {
     await page.goto(url);
@@ -133,9 +134,11 @@ test("corrupt storage falls back safely and no external integration is called", 
     localStorage.setItem("ai-avito-seller:v1", '{"version":1,"products":null}'),
   );
   await page.goto("/settings");
-  await expect(page.getByRole("alert").filter({hasText:"Сохранённые данные повреждены"})).toContainText(
-    "Сохранённые данные повреждены",
-  );
+  await expect(
+    page
+      .getByRole("alert")
+      .filter({ hasText: "Сохранённые данные повреждены" }),
+  ).toContainText("Сохранённые данные повреждены");
   await expect(page.getByLabel("Название магазина")).toHaveValue("Техно Стор");
   await expect(page.getByText("Не подключено", { exact: true })).toBeVisible();
   expect(external).toEqual([]);

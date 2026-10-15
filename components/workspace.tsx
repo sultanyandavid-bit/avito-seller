@@ -11,6 +11,7 @@ import {
   ChevronDown,
   ShieldCheck,
   Menu,
+  FlaskConical,
 } from "lucide-react";
 import type { Section, Store } from "@/lib/types";
 import { initialStore } from "@/lib/demo";
@@ -20,11 +21,13 @@ import Products from "./products";
 import Messages from "./messages";
 import Assistant from "./assistant";
 import SettingsPanel from "./settings";
+import Seller from "./seller";
 const nav = [
   { id: "dashboard", label: "Обзор", icon: LayoutDashboard },
   { id: "products", label: "Товары", icon: Package },
   { id: "messages", label: "Сообщения", icon: MessagesSquare },
   { id: "assistant", label: "AI-ассистент", icon: Sparkles },
+  { id: "seller", label: "AI-продавец", icon: FlaskConical },
   { id: "settings", label: "Настройки", icon: Settings },
 ] as const;
 export default function Workspace({ section }: { section: Section }) {
@@ -169,6 +172,7 @@ export default function Workspace({ section }: { section: Section }) {
               {section === "assistant" && (
                 <Assistant store={store} update={update} />
               )}
+              {section === "seller" && <Seller store={store} />}
               {section === "settings" && (
                 <SettingsPanel store={store} update={update} />
               )}
