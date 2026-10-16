@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import {
   LayoutDashboard,
   Package,
@@ -8,7 +9,7 @@ import {
   Sparkles,
   Settings,
   ArrowUpRight,
-  ChevronDown,
+  GraduationCap,
   ShieldCheck,
   Menu,
   FlaskConical,
@@ -22,52 +23,79 @@ import Products from "./products";
 import Messages from "./messages";
 import Assistant from "./assistant";
 import SettingsPanel from "./settings";
-import Seller from "./seller";
+const Seller = dynamic(() => import("./seller"), {
+  loading: () => <p className="loading">Загружаем AI-продавца…</p>,
+});
+const Learning = dynamic(() => import("./learning"), {
+  loading: () => <p className="loading">Загружаем AI-ученика…</p>,
+});
+import {
+  LocalWorkspaceProvider,
+  useLocalWorkspace,
+} from "./workspaces/provider";
+import { LearningProvider } from "./learning/provider";
+import Select from "./ui/select";
+import { MAIN_STORE_ID, scopedKey } from "@/lib/workspaces/types";
+import { usePersistentState } from "@/lib/client/use-persistent-state";
 import { useMobile } from "@/lib/client/use-mobile";
 const nav = [
   { id: "dashboard", label: "Обзор", icon: LayoutDashboard },
   { id: "products", label: "Товары", icon: Package },
   { id: "messages", label: "Сообщения", icon: MessagesSquare },
   { id: "assistant", label: "AI-ассистент", icon: Sparkles },
+  { id: "learning", label: "AI-ученик", icon: GraduationCap },
   { id: "seller", label: "AI-продавец", icon: FlaskConical },
   { id: "settings", label: "Настройки", icon: Settings },
 ] as const;
 export default function Workspace({ section }: { section: Section }) {
-  const [store, setStore] = useState<Store>(initialStore),
-    [ready, setReady] = useState(false),
-    [storageError, setStorageError] = useState(""),
-    [mobile, setMobile] = useState(false);
-  /* eslint-disable react-hooks/set-state-in-effect -- Synchronizing browser-only storage after SSR and reporting storage failures. */
-  // Browser storage is an external system; hydrate after mount to keep SSR deterministic.
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const saved = parseStore(raw);
-        if (saved) setStore(saved);
-        else
-          setStorageError("Сохранённые данные повреждены. Загружен демонабор.");
-      }
-    } catch {
-      setStorageError(
-        "Хранилище браузера недоступно. Изменения сохраняются только до закрытия страницы.",
-      );
-    }
-    setReady(true);
-  }, []);
-  // Report persistence failures to the user instead of silently losing changes.
-  useEffect(() => {
-    if (ready) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
-      } catch {
-        setStorageError(
-          "Не удалось сохранить данные в браузере. Проверьте доступное место.",
-        );
-      }
-    }
-  }, [store, ready]);
-  /* eslint-enable react-hooks/set-state-in-effect */
+  return (
+    <LocalWorkspaceProvider>
+      <WorkspaceGate section={section} />
+    </LocalWorkspaceProvider>
+  );
+}
+function WorkspaceGate({ section }: { section: Section }) {
+  const { workspace, ready } = useLocalWorkspace();
+  if (!ready) return <main className="loading">Загружаем магазины…</main>;
+  const current = workspace.stores.find(
+    (s) => s.id === workspace.activeStoreId,
+  )!;
+  return (
+    <LearningProvider key={current.id} storeId={current.id}>
+      <WorkspaceContent
+        section={section}
+        storeId={current.id}
+        initialName={current.name}
+      />
+    </LearningProvider>
+  );
+}
+function WorkspaceContent({
+  section,
+  storeId,
+  initialName,
+}: {
+  section: Section;
+  storeId: string;
+  initialName: string;
+}) {
+  const registry = useLocalWorkspace();
+  const seed: Store =
+    storeId === MAIN_STORE_ID
+      ? initialStore
+      : {
+          ...initialStore,
+          shopName: initialName,
+          products: [],
+          conversations: [],
+        };
+  const {
+    data: store,
+    update: setStore,
+    ready,
+    error: storageError,
+  } = usePersistentState(scopedKey(STORAGE_KEY, storeId), seed, parseStore);
+  const [mobile, setMobile] = useState(false);
   const isMobile = useMobile();
   const sidebarRef = useRef<HTMLElement>(null),
     menuRef = useRef<HTMLButtonElement>(null);
@@ -86,8 +114,10 @@ export default function Workspace({ section }: { section: Section }) {
   };
   const unread = store.conversations.reduce((n, c) => n + c.unread, 0),
     human = store.conversations.filter((c) => c.human).length;
-  const update = (patch: Partial<Store>) =>
+  const update = (patch: Partial<Store>) => {
     setStore((s) => ({ ...s, ...patch }));
+    if (patch.shopName) registry.rename(storeId, patch.shopName);
+  };
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main-content">
@@ -137,14 +167,22 @@ export default function Workspace({ section }: { section: Section }) {
             <small>ПРОДАВАЙТЕ УМНЕЕ</small>
           </span>
         </Link>
-        <Link href="/settings" className="shop">
-          <span className="shop-avatar">ТС</span>
-          <span>
-            {store.shopName}
-            <small>Рабочее пространство</small>
-          </span>
-          <ChevronDown size={15} />
-        </Link>
+        <div className="shop-picker">
+          <label>
+            Ваш магазин
+            <Select
+              aria-label="Выбор магазина"
+              value={storeId}
+              onChange={(e) => registry.choose(e.target.value)}
+            >
+              {registry.workspace.stores.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.id === storeId ? store.shopName : s.name}
+                </option>
+              ))}
+            </Select>
+          </label>
+        </div>
         <div className="nav-label">УПРАВЛЕНИЕ</div>
         <nav>
           {nav.map((n) => (
@@ -210,9 +248,9 @@ export default function Workspace({ section }: { section: Section }) {
           </span>
         </header>
         <main id="main-content" tabIndex={-1}>
-          {storageError && (
+          {(storageError || registry.error) && (
             <div role="alert" className="notice">
-              {storageError}
+              {storageError || registry.error}
             </div>
           )}
           {!ready ? (
@@ -229,11 +267,16 @@ export default function Workspace({ section }: { section: Section }) {
                 <Messages store={store} update={update} />
               )}
               {section === "assistant" && (
-                <Assistant store={store} update={update} />
+                <Assistant store={store} update={update} storeId={storeId} />
               )}
-              {section === "seller" && <Seller store={store} />}
+              {section === "learning" && (
+                <Learning store={store} storeId={storeId} />
+              )}
+              {section === "seller" && (
+                <Seller store={store} storeId={storeId} />
+              )}
               {section === "settings" && (
-                <SettingsPanel store={store} update={update} />
+                <SettingsPanel store={store} update={update} resetSeed={seed} />
               )}
             </>
           )}

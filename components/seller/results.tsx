@@ -1,5 +1,6 @@
 "use client";
 import Select from "../ui/select";
+import FeedbackActions from "../learning/feedback-actions";
 import {
   criteria,
   providerLabels,
@@ -120,6 +121,13 @@ export default function Results({
                 При ошибке провайдер мог учесть запрос. Токены и расходы
                 неизвестны.
               </p>
+            )}
+            {r.text && !r.error && (
+              <FeedbackActions
+                product={run.product}
+                question={run.scenario.question}
+                original={r.text}
+              />
             )}
             <details className="seller-details">
               <summary>Оценить ответ вручную</summary>

@@ -11,6 +11,7 @@ test("shared selects and all existing pages fit required widths", async ({
       "/messages",
       "/assistant",
       "/seller",
+      "/learning",
       "/settings",
     ]) {
       await page.goto(url);

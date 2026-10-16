@@ -6,13 +6,19 @@ import type { Store } from "@/lib/types";
 import { initialStore } from "@/lib/demo";
 import Heading from "./heading";
 import Modal from "./modal";
+import { useLocalWorkspace } from "./workspaces/provider";
 export default function SettingsPanel({
   store,
   update,
+  resetSeed = initialStore,
 }: {
   store: Store;
   update: (s: Partial<Store>) => void;
+  resetSeed?: Store;
 }) {
+  const registry = useLocalWorkspace();
+  const [newStore, setNewStore] = useState(""),
+    [storeError, setStoreError] = useState("");
   const [name, setName] = useState(store.shopName),
     [city, setCity] = useState(store.city),
     [saved, setSaved] = useState(false),
@@ -68,6 +74,35 @@ export default function SettingsPanel({
                 <Check size={15} /> Сохранено
               </span>
             )}
+          </form>
+          <hr />
+          <h2>Магазины владельца</h2>
+          <p className="muted">
+            Локальные рабочие пространства в этом браузере. Это не регистрация
+            пользователей и не серверная авторизация.
+          </p>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!registry.create(newStore))
+                setStoreError(
+                  "Укажите название до 60 символов. Максимум 30 магазинов.",
+                );
+            }}
+          >
+            <label>
+              Название нового магазина
+              <input
+                required
+                maxLength={60}
+                value={newStore}
+                onChange={(e) => setNewStore(e.target.value)}
+              />
+            </label>
+            <button className="button secondary" type="submit">
+              Добавить магазин
+            </button>
+            {storeError && <p role="alert">{storeError}</p>}
           </form>
           <hr />
           <h2>Демонстрационные данные</h2>
@@ -132,9 +167,9 @@ export default function SettingsPanel({
             <button
               className="button danger"
               onClick={() => {
-                update(structuredClone(initialStore));
-                setName(initialStore.shopName);
-                setCity(initialStore.city);
+                update(structuredClone(resetSeed));
+                setName(resetSeed.shopName);
+                setCity(resetSeed.city);
                 setSaved(false);
                 setReset(false);
               }}

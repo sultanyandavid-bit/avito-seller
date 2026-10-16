@@ -16,6 +16,9 @@ import { usePersistentState } from "@/lib/client/use-persistent-state";
 import { copyText } from "@/lib/client/clipboard";
 import Select from "./ui/select";
 import Heading from "./heading";
+import FeedbackActions from "./learning/feedback-actions";
+import { useLearning } from "./learning/provider";
+import { relevantExamples } from "@/lib/learning/repository";
 export default function Assistant({
   store,
   update,
@@ -44,6 +47,13 @@ export default function Assistant({
     parseChatData,
   );
   const bottom = useRef<HTMLDivElement>(null);
+  const { data: training } = useLearning();
+  const references = relevantExamples(
+    training.examples,
+    storeId,
+    productId,
+    question,
+  );
   const ai = store.ai;
   const drafts = data.drafts.filter((d) => d.productId === productId);
   useEffect(() => {
@@ -247,6 +257,14 @@ export default function Assistant({
                     </button>
                   </div>
                 </div>
+                {store.products.find((p) => p.id === d.productId) && (
+                  <FeedbackActions
+                    product={store.products.find((p) => p.id === d.productId)!}
+                    question={d.question}
+                    original={d.original}
+                    corrected={d.edited ?? undefined}
+                  />
+                )}
                 {d.edited && editing !== d.id && (
                   <div className="bubble seller">
                     <small>Ваш вариант · не отправлен</small>
@@ -300,6 +318,23 @@ export default function Assistant({
             ))}
             <div ref={bottom} />
           </div>
+          {references.length > 0 && (
+            <details className="assistant-references">
+              <summary>
+                Одобренные примеры по этому вопросу · {references.length}
+              </summary>
+              <p className="muted">
+                Справка продавцу. Демоалгоритм не обучается и не подменяет ответ
+                примером; проверьте актуальные факты.
+              </p>
+              {references.map((r) => (
+                <div className="approved-reference" key={r.example.id}>
+                  <strong>{r.example.question}</strong>
+                  <p>{r.example.correctedReply}</p>
+                </div>
+              ))}
+            </details>
+          )}
           <form
             className="assistant-composer"
             onSubmit={(e) => {

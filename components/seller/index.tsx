@@ -22,6 +22,7 @@ import {
 } from "@/lib/seller/types";
 import { parseSellerData } from "@/lib/seller/validation";
 import Heading from "../heading";
+import { MAIN_STORE_ID, scopedKey } from "@/lib/workspaces/types";
 import Knowledge from "./knowledge";
 import Results from "./results";
 import History from "./history";
@@ -31,9 +32,21 @@ const tabs = [
   { id: "knowledge", label: "База знаний", icon: BookOpen },
   { id: "history", label: "История тестов", icon: HistoryIcon },
 ] as const;
-export default function Seller({ store }: { store: Store }) {
-  const [data, setData] = useState<SellerData>(sellerSeed),
+export default function Seller({
+  store,
+  storeId = MAIN_STORE_ID,
+}: {
+  store: Store;
+  storeId?: string;
+}) {
+  const storageKey = scopedKey(sellerStorageKey, storeId);
+  const seed =
+    storeId === MAIN_STORE_ID
+      ? sellerSeed
+      : { ...sellerSeed, products: [], runs: [] };
+  const [data, setData] = useState<SellerData>(seed),
     [ready, setReady] = useState(false),
+    [blocked, setBlocked] = useState(false),
     [tab, setTab] = useState<(typeof tabs)[number]["id"]>("testing"),
     [models, setModels] = useState<ModelOption[]>(demoModels),
     [providers, setProviders] = useState<ProviderStatus[]>(
@@ -53,33 +66,36 @@ export default function Seller({ store }: { store: Store }) {
   /* eslint-disable react-hooks/set-state-in-effect -- Hydrate browser-only persisted lab state after SSR. */
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(sellerStorageKey);
+      const raw = localStorage.getItem(storageKey);
       if (raw) {
         const saved = parseSellerData(raw);
         if (saved) setData(saved);
-        else
+        else {
+          setBlocked(true);
           setStorageError(
-            "Данные AI-продавца повреждены. Загружена демонстрационная база; прежний каталог магазина не затронут.",
+            "Данные AI-продавца повреждены. Исходная запись сохранена; изменения остаются в памяти.",
           );
+        }
       }
     } catch {
+      setBlocked(true);
       setStorageError(
         "Хранилище недоступно. Тесты будут доступны только до закрытия страницы.",
       );
     }
     setReady(true);
-  }, []);
+  }, [storageKey]);
   useEffect(() => {
-    if (ready) {
+    if (ready && !blocked) {
       try {
-        localStorage.setItem(sellerStorageKey, JSON.stringify(data));
+        localStorage.setItem(storageKey, JSON.stringify(data));
       } catch {
         setStorageError(
           "Не удалось сохранить базу или историю. Экспортируйте тесты, чтобы не потерять изменения.",
         );
       }
     }
-  }, [data, ready]);
+  }, [data, ready, blocked, storageKey]);
   /* eslint-enable react-hooks/set-state-in-effect */
   useEffect(() => {
     const controller = new AbortController();

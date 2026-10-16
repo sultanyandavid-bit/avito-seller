@@ -651,7 +651,7 @@ a:focus-visible {
 .shop-picker .select-control select {
   font-size: 13px;
   background: #f8faf7;
-  padding-right: 43px;
+  padding-right: 48px;
 }
 .shop-picker .select-control > svg {
   right: 16px;
@@ -1095,5 +1095,202 @@ a:focus-visible {
     scroll-behavior: auto !important;
     transition: none !important;
     animation: none !important;
+  }
+}
+/* Learning and local store workspaces. */
+.learning-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin: 24px 0;
+}
+.learning-summary .panel {
+  padding: 22px;
+}
+.learning-summary small {
+  font-size: 13px;
+  color: var(--muted);
+}
+.learning-summary strong {
+  display: block;
+  font-size: 32px;
+  margin-top: 12px;
+  color: #315736;
+  font-weight: 550;
+}
+.learning-toolbar {
+  align-items: center;
+  flex-wrap: wrap;
+}
+.learning-toolbar > .search {
+  flex: 1;
+  min-width: 200px;
+}
+.learning-toolbar > .select-control {
+  width: 190px;
+  margin: 0;
+}
+.learning-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+.learning-example small {
+  font-size: 12px;
+  color: #647b5d;
+}
+.learning-example h3 {
+  font-size: 16px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+  margin: 14px 0;
+}
+.learning-example dl {
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+}
+.learning-example dt {
+  font-size: 12px;
+  font-weight: 600;
+  color: #5f7c54;
+  margin: 14px 0 6px;
+}
+.learning-example dd {
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+  margin: 0;
+  color: #3e5a37;
+}
+.learning-search {
+  margin: 28px 0;
+}
+.approved-reference {
+  padding: 16px;
+  background: #f0f6e9;
+  border: 1px solid #dce8d1;
+  border-radius: 8px;
+  margin: 14px 0;
+  overflow-wrap: anywhere;
+}
+.approved-reference strong {
+  font-size: 13px;
+}
+.approved-reference p {
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.8;
+  margin-top: 8px;
+}
+.approved-reference small {
+  font-size: 11px;
+  color: #617e53;
+  display: block;
+  margin-top: 10px;
+}
+.example-revision {
+  border-top: 1px solid var(--line);
+  padding: 14px 0;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.example-revision p {
+  font-size: 13px;
+  white-space: pre-wrap;
+  margin-top: 8px;
+  line-height: 1.8;
+}
+.example-product {
+  background: #f4f7ef;
+  padding: 14px;
+  border-radius: 8px;
+  margin-top: 18px;
+}
+.example-product small,
+.example-product strong {
+  display: block;
+}
+.example-product small {
+  color: #6a7f5e;
+  font-size: 12px;
+}
+.example-product strong {
+  font-weight: 550;
+  margin-top: 5px;
+}
+.feedback-actions {
+  border-top: 1px solid #dbe5d1;
+  padding-top: 5px;
+  margin-top: 3px;
+}
+.feedback-actions .chat-actions {
+  gap: 12px;
+}
+.feedback-status {
+  font-size: 12px;
+  color: #4a7339;
+  line-height: 1.8;
+  margin-top: 8px;
+}
+.assistant-references {
+  padding: 18px 22px;
+  border-top: 1px solid var(--line);
+}
+.assistant-references summary {
+  font-size: 13px;
+  color: #507143;
+  cursor: pointer;
+  min-height: 36px;
+  line-height: 1.8;
+}
+.assistant-exchange .feedback-actions {
+  padding: 8px 12px;
+  background: #f2f7ed;
+  border: 1px solid #dfe9d5;
+  border-radius: 8px;
+}
+.assistant-exchange .chat-actions {
+  margin-top: 4px;
+}
+@media (max-width: 900px) {
+  .learning-list {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 700px) {
+  .learning-summary {
+    gap: 10px;
+  }
+  .learning-summary .panel {
+    padding: 14px;
+  }
+  .learning-summary small {
+    font-size: 11px;
+  }
+  .learning-summary strong {
+    font-size: 26px;
+  }
+  .learning-toolbar > .select-control {
+    width: 100%;
+  }
+  .learning-toolbar .button {
+    width: 100%;
+  }
+  .learning-toolbar > .search {
+    width: 100%;
+    min-width: 0;
+  }
+  .learning-example .chat-actions .button {
+    flex: 1;
+  }
+  .assistant-references {
+    padding: 16px;
+  }
+  .feedback-actions .chat-actions {
+    gap: 10px;
+  }
+  .learning-list {
+    gap: 18px;
   }
 }
