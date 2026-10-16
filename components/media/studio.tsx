@@ -13,9 +13,9 @@ import {
 import { getAsset, uploadAsset, putAsset } from "@/lib/media/assets";
 import { preparePhoto, recordSlideshow } from "@/lib/media/processors";
 import Heading from "../heading";
-import {downloadJson} from "@/lib/client/download";
+import { downloadJson } from "@/lib/client/download";
 import Select from "../ui/select";
-import AssetPreview from "./asset-preview";
+import AssetPreview, { PhotoComparison } from "./asset-preview";
 export default function MediaStudio({
   kind,
   storeId,
@@ -300,8 +300,8 @@ export default function MediaStudio({
         </div>
       </div>
       {(message || error) && (
-        <p role="status" className="notice">
-          {message || error}
+        <p role={error ? "alert" : "status"} className="notice">
+          {error || message}
         </p>
       )}
       <div className="media-layout">
@@ -565,7 +565,21 @@ export default function MediaStudio({
           </p>
         </section>
         <section className="panel form-panel media-results">
-          <div className="panel-heading"><h2>Задания и результаты</h2><button className="text-link" disabled={!jobs.length} onClick={()=>downloadJson(`sellerai-media-jobs-${storeId}.json`,{...data,jobs})}>Экспорт заданий</button></div>
+          <div className="panel-heading">
+            <h2>Задания и результаты</h2>
+            <button
+              className="text-link"
+              disabled={!jobs.length}
+              onClick={() =>
+                downloadJson(`sellerai-media-jobs-${storeId}.json`, {
+                  ...data,
+                  jobs,
+                })
+              }
+            >
+              Экспорт заданий
+            </button>
+          </div>
           {!jobs.length ? (
             <div className="empty">
               <Film size={30} />
@@ -635,22 +649,24 @@ export default function MediaStudio({
                     {active.kind === "photo" ? "До / После" : "Готовый ролик"}
                   </h4>
                   <div className="asset-grid">
-                    {active.kind === "photo" && active.sourceIds[0] && (
-                      <AssetPreview
-                        storeId={storeId}
-                        id={active.sourceIds[0]}
-                        label="Исходник · до"
-                      />
+                    {active.outputIds.map((id, i) =>
+                      active.kind === "photo" ? (
+                        <PhotoComparison
+                          key={id}
+                          storeId={storeId}
+                          id={id}
+                          label={`Локальный вариант ${i + 1}`}
+                        />
+                      ) : (
+                        <AssetPreview
+                          key={id}
+                          storeId={storeId}
+                          id={id}
+                          download
+                          label={`Ролик ${i + 1}`}
+                        />
+                      ),
                     )}
-                    {active.outputIds.map((id, i) => (
-                      <AssetPreview
-                        key={id}
-                        storeId={storeId}
-                        id={id}
-                        download
-                        label={`${active.kind === "photo" ? "Локальный вариант" : "Ролик"} ${i + 1}`}
-                      />
-                    ))}
                   </div>
                 </>
               )}

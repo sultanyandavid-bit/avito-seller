@@ -60,11 +60,9 @@ test("knowledge CRUD preserves old catalog and historical product snapshots", as
   await page.getByRole("button", { name: "Запустить демосравнение" }).click();
   await expect(page.locator(".seller-result-card")).toHaveCount(2);
   await page.getByRole("tab", { name: "База знаний" }).click();
-  const bike = page
-    .locator(".seller-knowledge-card")
-    .filter({
-      has: page.getByRole("heading", { name: "Городской велосипед" }),
-    });
+  const bike = page.locator(".seller-knowledge-card").filter({
+    has: page.getByRole("heading", { name: "Городской велосипед" }),
+  });
   await bike.getByRole("button", { name: "Редактировать знания" }).click();
   const dialog = page.getByRole("dialog");
   await dialog.getByLabel("Цена, ₽").fill("100");

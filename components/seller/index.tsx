@@ -22,6 +22,7 @@ import {
 } from "@/lib/seller/types";
 import { parseSellerData } from "@/lib/seller/validation";
 import Heading from "../heading";
+import AutomationPolicyPanel from "../automation-policy";
 import { MAIN_STORE_ID, scopedKey } from "@/lib/workspaces/types";
 import Knowledge from "./knowledge";
 import Results from "./results";
@@ -136,6 +137,12 @@ export default function Seller({
     }));
   async function run(input: CompareInput, token: string) {
     if (inFlight.current) return;
+    if (data.runs.length >= 50) {
+      setError(
+        "История содержит 50 тестов. Экспортируйте её и очистите вручную, прежде чем запускать следующий тест.",
+      );
+      return;
+    }
     setError("");
     setBusy(true);
     const controller = new AbortController();
@@ -164,7 +171,7 @@ export default function Seller({
           review: { scores: {}, comment: "" },
         })),
     };
-    setData((s) => ({ ...s, runs: [pending, ...s.runs].slice(0, 50) }));
+    setData((s) => ({ ...s, runs: [pending, ...s.runs] }));
     setActiveId(runId);
     try {
       const response = await fetch("/api/seller/compare", {
@@ -224,6 +231,7 @@ export default function Seller({
         title="AI-продавец"
         description="Проверьте, как помощник общается с вашими покупателями."
       />
+      <AutomationPolicyPanel storeId={storeId} />
       <div
         className="seller-tabs"
         role="tablist"

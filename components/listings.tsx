@@ -45,7 +45,7 @@ export default function Listings({
     advantages: "",
     specifications: "",
     condition: "",
-    price: 0,
+    price: null,
     terms: "",
     instructions: "",
     style: "professional",
@@ -112,8 +112,8 @@ export default function Listings({
         </div>
       </div>
       {(message || error) && (
-        <p className="notice" role="status">
-          {message || error}
+        <p className="notice" role={error ? "alert" : "status"}>
+          {error || message}
         </p>
       )}
       {draft && (
@@ -195,8 +195,13 @@ export default function Listings({
                   type="number"
                   min="0"
                   max="1000000000"
-                  value={draft.price}
-                  onChange={(e) => patch({ price: Number(e.target.value) })}
+                  value={draft.price ?? ""}
+                  onChange={(e) =>
+                    patch({
+                      price:
+                        e.target.value === "" ? null : Number(e.target.value),
+                    })
+                  }
                 />
               </label>
             </div>

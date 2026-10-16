@@ -13,6 +13,7 @@ import type { Store } from "@/lib/types";
 import { demoAssistant } from "@/lib/assistant";
 import { chatSeed, parseChatData, type ChatDraft } from "@/lib/learning/chat";
 import { usePersistentState } from "@/lib/client/use-persistent-state";
+import { downloadJson } from "@/lib/client/download";
 import { copyText } from "@/lib/client/clipboard";
 import Select from "./ui/select";
 import Heading from "./heading";
@@ -66,6 +67,12 @@ export default function Assistant({
   }, [drafts.length]);
   async function generate() {
     if (!question.trim() || busy || !ready) return;
+    if (data.drafts.length >= 200) {
+      setStatus(
+        "Лимит 200 тестовых обменов. История сохранена; экспортируйте её перед дальнейшей работой.",
+      );
+      return;
+    }
     setBusy(true);
     setStatus("");
     try {
@@ -80,7 +87,7 @@ export default function Assistant({
         handoff: r.handoff,
         createdAt: new Date().toISOString(),
       };
-      save((v) => ({ ...v, drafts: [...v.drafts, d].slice(-200) }));
+      save((v) => ({ ...v, drafts: [...v.drafts, d] }));
       setQuestion("");
     } catch {
       setStatus("Не удалось подготовить ответ. Попробуйте ещё раз.");
@@ -177,7 +184,19 @@ export default function Assistant({
               <h2>Тестовый диалог</h2>
               <small>Демо · ответы не отправляются</small>
             </div>
-            <MessagesSquare size={22} />
+            <button
+              className="text-link"
+              disabled={!data.drafts.length}
+              onClick={() =>
+                downloadJson(`sellerai-chat-${storeId}.json`, {
+                  storeId,
+                  ...data,
+                })
+              }
+            >
+              <MessagesSquare size={18} />
+              Экспорт истории
+            </button>
           </div>
           <div className="assistant-product">
             <label>

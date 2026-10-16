@@ -73,3 +73,34 @@ export default function AssetPreview({
     </figure>
   );
 }
+
+export function PhotoComparison({
+  storeId,
+  id,
+  label,
+}: {
+  storeId: string;
+  id: string;
+  label: string;
+}) {
+  const [source, setSource] = useState<string | null>(null);
+  useEffect(() => {
+    let active = true;
+    getAsset(storeId, id)
+      .then((a) => {
+        if (active) setSource(a?.sourceId ?? null);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [storeId, id]);
+  return (
+    <div className="photo-comparison">
+      {source && (
+        <AssetPreview storeId={storeId} id={source} label="Исходник · до" />
+      )}
+      <AssetPreview storeId={storeId} id={id} label={label} download />
+    </div>
+  );
+}

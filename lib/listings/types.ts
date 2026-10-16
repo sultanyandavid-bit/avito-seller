@@ -11,7 +11,7 @@ export type Listing = {
   advantages: string;
   specifications: string;
   condition: string;
-  price: number;
+  price: number | null;
   terms: string;
   instructions: string;
   style: ListingStyle;
@@ -64,8 +64,10 @@ export function parseListings(
               typeof l[k as keyof Listing] === "string" &&
               String(l[k as keyof Listing]).length <= 10000,
           ) &&
-          Number.isFinite(l.price) &&
-          l.price >= 0 &&
+          (l.price === null ||
+            (typeof l.price === "number" &&
+              Number.isFinite(l.price) &&
+              l.price >= 0)) &&
           Object.hasOwn(listingStyles, l.style) &&
           Array.isArray(l.assetIds) &&
           l.assetIds.length <= 10 &&
@@ -86,7 +88,7 @@ export function buildListing(input: {
   description: string;
   specifications: string;
   condition: string;
-  price: number;
+  price: number | null;
   terms: string;
   instructions: string;
   style: ListingStyle;
@@ -98,6 +100,7 @@ export function buildListing(input: {
     !input.specifications.trim() ||
     !input.condition.trim() ||
     !input.terms.trim() ||
+    typeof input.price !== "number" ||
     !Number.isFinite(input.price) ||
     input.price < 0
   )

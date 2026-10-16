@@ -96,6 +96,7 @@ export async function recordSlideshow(
     return await new Promise<Blob>((resolve, reject) => {
       const chunks: Blob[] = [];
       let raf = 0,
+        lastProgress = -5,
         done = false;
       const started = performance.now();
       const cleanup = () => {
@@ -156,9 +157,14 @@ export async function recordSlideshow(
             c.width - 56,
           );
         }
-        onProgress(
-          Math.min(99, Math.round((elapsed / (duration * 1000)) * 100)),
+        const percent = Math.min(
+          99,
+          Math.round((elapsed / (duration * 1000)) * 100),
         );
+        if (percent - lastProgress >= 5) {
+          onProgress(percent);
+          lastProgress = percent;
+        }
         if (elapsed >= duration * 1000) {
           recorder.stop();
           return;

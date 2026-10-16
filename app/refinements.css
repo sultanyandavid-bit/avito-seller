@@ -1506,3 +1506,137 @@ a:focus-visible {
     padding: 20px;
   }
 }
+.automation-panel {
+  margin-bottom: 24px;
+}
+.automation-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.automation-heading h2 {
+  font-size: 17px;
+}
+.automation-heading p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-top: 7px;
+}
+.automation-panel > label {
+  max-width: 530px;
+}
+.scenario-fieldset {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-top: 18px;
+}
+.scenario-fieldset legend {
+  font-size: 13px;
+  color: #56734b;
+  padding: 0 8px;
+}
+.scenario-fieldset label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+  min-height: 36px;
+}
+.scenario-fieldset input {
+  display: inline;
+  width: 18px;
+  height: 18px;
+  min-height: 18px;
+  margin: 0;
+  accent-color: var(--green);
+}
+.analytics-facts {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 15px;
+  margin: 22px 0;
+  font-size: 13px;
+}
+.analytics-facts dt {
+  color: var(--muted);
+}
+.analytics-facts dd {
+  text-align: right;
+  margin: 0;
+  color: #375c2d;
+  overflow-wrap: anywhere;
+}
+.analytics-question {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.analytics-question span {
+  overflow-wrap: anywhere;
+}
+.analytics-empty {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-top: 25px;
+}
+.analytics-empty svg {
+  flex-shrink: 0;
+  color: #6c895a;
+}
+.analytics-empty p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--muted);
+  margin-top: 12px;
+}
+.learning-summary .panel > p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-top: 10px;
+}
+@media (max-width: 700px) {
+  .automation-panel {
+    padding: 20px;
+  }
+  .analytics-empty {
+    gap: 12px;
+  }
+  .analytics-facts {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .analytics-facts dd {
+    text-align: left;
+    margin-bottom: 10px;
+  }
+  .scenario-fieldset input {
+    font-size: 16px !important;
+  }
+  .scenario-fieldset label {
+    min-height: 44px;
+  }
+  .analytics-empty h2 {
+    font-size: 17px;
+  }
+}
+.photo-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  grid-column: 1/-1;
+}
+@media (max-width: 390px) {
+  .photo-comparison {
+    grid-template-columns: 1fr;
+  }
+}

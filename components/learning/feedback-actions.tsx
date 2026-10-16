@@ -91,7 +91,7 @@ export default function FeedbackActions({
       </div>
       {(message || error) && (
         <p role="status" className="feedback-status">
-          {message || error}
+          {error || message}
         </p>
       )}
       {edit && (

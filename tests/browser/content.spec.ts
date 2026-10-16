@@ -37,13 +37,11 @@ test("photo studio validates uploads and produces actual persistent PNG outputs"
   await page.goto("/photo");
   await page.getByLabel("Режим студии").selectOption("local");
   await page.getByLabel("Название товара").fill("Тестовое фото");
-  await page
-    .getByLabel("Исходники студии")
-    .setInputFiles({
-      name: "fake.png",
-      mimeType: "image/png",
-      buffer: Buffer.from("<html>not image</html>"),
-    });
+  await page.getByLabel("Исходники студии").setInputFiles({
+    name: "fake.png",
+    mimeType: "image/png",
+    buffer: Buffer.from("<html>not image</html>"),
+  });
   await expect(
     page.getByRole("status").filter({ hasText: "Формат файла не подтверждён" }),
   ).toBeVisible();
@@ -55,8 +53,14 @@ test("photo studio validates uploads and produces actual persistent PNG outputs"
   await page.getByRole("button", { name: "Запустить локально" }).click();
   await expect(page.locator(".media-job")).toContainText("Готово");
   await expect(page.getByRole("link", { name: "Скачать PNG" })).toHaveCount(2);
-  await expect(page.locator('.media-active img').last()).toHaveJSProperty('naturalWidth',1200);
-  await expect(page.locator('.media-active img').last()).toHaveJSProperty('naturalHeight',1200);
+  await expect(page.locator(".media-active img").last()).toHaveJSProperty(
+    "naturalWidth",
+    1200,
+  );
+  await expect(page.locator(".media-active img").last()).toHaveJSProperty(
+    "naturalHeight",
+    1200,
+  );
   await page.reload();
   await page.locator(".media-job").click();
   await expect(page.getByRole("link", { name: "Скачать PNG" })).toHaveCount(2);
@@ -108,4 +112,29 @@ test("video studio records a playable local slideshow without an AI provider", a
   await page.reload();
   await page.locator(".media-job").click();
   await expect(page.locator(".media-active video")).toBeVisible();
+});
+
+test("storage quota failures remain visible instead of a false saved confirmation", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Storage.prototype.setItem = function () {
+      throw new DOMException("Quota exceeded", "QuotaExceededError");
+    };
+  });
+  await page.goto("/photo");
+  await page.getByLabel("Название товара").fill("Новый товар");
+  await page.getByLabel("Описание и задача").fill("Нейтральный фон");
+  await page.getByRole("button", { name: "Сохранить задание" }).click();
+  await expect(
+    page
+      .getByRole("alert")
+      .filter({ hasText: "Не удалось сохранить изменения" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "Задание сохранено. Генеративный провайдер не подключён: обработка и расходы не начались.",
+      { exact: true },
+    ),
+  ).toHaveCount(0);
 });

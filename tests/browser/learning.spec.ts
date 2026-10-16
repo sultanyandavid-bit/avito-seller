@@ -151,3 +151,29 @@ test("invalid existing data is preserved, not overwritten by fallback views", as
     await page.evaluate(() => localStorage.getItem("ai-avito-seller:v1")),
   ).toBe("invalid-base");
 });
+
+test("future automation settings never enable sending and analytics uses local observations", async ({
+  page,
+}) => {
+  await page.goto("/seller");
+  await page.getByLabel("Режим работы AI").selectOption("seller");
+  await page.getByText("Правила будущих автоответов", { exact: true }).click();
+  await expect(
+    page.getByRole("switch", { name: "Автоматическая отправка", exact: true }),
+  ).toBeDisabled();
+  await expect(
+    page.getByRole("switch", { name: "Автоматическая отправка", exact: true }),
+  ).toHaveAttribute("aria-checked", "false");
+  await page.getByLabel("Цена", { exact: true }).check();
+  await page.reload();
+  await expect(page.getByLabel("Режим работы AI")).toHaveValue("seller");
+  await page.getByText("Правила будущих автоответов", { exact: true }).click();
+  await expect(page.getByLabel("Цена", { exact: true })).toBeChecked();
+  await page.goto("/analytics");
+  await expect(
+    page.getByRole("heading", {
+      name: "Конверсия и эффективность продаж пока неизвестны",
+    }),
+  ).toBeVisible();
+  await expect(page.getByText("Нет данных", { exact: true })).toBeVisible();
+});

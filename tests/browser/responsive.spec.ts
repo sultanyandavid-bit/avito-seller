@@ -3,6 +3,7 @@ const widths = [320, 375, 390, 430, 768, 1024, 1440];
 test("shared selects and all existing pages fit required widths", async ({
   page,
 }) => {
+  test.setTimeout(120000);
   for (const width of widths) {
     await page.setViewportSize({ width, height: 950 });
     for (const url of [
@@ -12,6 +13,10 @@ test("shared selects and all existing pages fit required widths", async ({
       "/assistant",
       "/seller",
       "/learning",
+      "/listings",
+      "/photo",
+      "/video",
+      "/analytics",
       "/settings",
     ]) {
       await page.goto(url);

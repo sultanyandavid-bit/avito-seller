@@ -13,6 +13,7 @@ import {
   FileText,
   Camera,
   Film,
+  BarChart3,
   ShieldCheck,
   Menu,
   FlaskConical,
@@ -47,6 +48,9 @@ const Listings = dynamic(() => import("./listings"), {
 const MediaStudio = dynamic(() => import("./media/studio"), {
   loading: () => <p className="loading">Загружаем студию…</p>,
 });
+const Analytics = dynamic(() => import("./analytics"), {
+  loading: () => <p className="loading">Загружаем аналитику…</p>,
+});
 const nav = [
   { id: "dashboard", label: "Обзор", icon: LayoutDashboard },
   { id: "products", label: "Товары", icon: Package },
@@ -57,6 +61,7 @@ const nav = [
   { id: "listings", label: "AI-объявления", icon: FileText },
   { id: "photo", label: "AI-фотостудия", icon: Camera },
   { id: "video", label: "AI-видеостудия", icon: Film },
+  { id: "analytics", label: "Аналитика", icon: BarChart3 },
   { id: "settings", label: "Настройки", icon: Settings },
 ] as const;
 export default function Workspace({ section }: { section: Section }) {
@@ -226,7 +231,7 @@ function WorkspaceContent({
           <div className="profile">
             <span className="avatar">ДС</span>
             <span>
-              Демо-продавец<small>Локальный профиль</small>
+              Владелец пространства<small>Локальный профиль</small>
             </span>
             <span className="profile-dot" />
           </div>
@@ -256,7 +261,7 @@ function WorkspaceContent({
             <strong>{nav.find((n) => n.id === section)?.label}</strong>
           </div>
           <span className="demo-pill">
-            <span /> Демо-версия
+            <span /> Локальный режим
           </span>
         </header>
         <main id="main-content" tabIndex={-1}>
@@ -293,6 +298,9 @@ function WorkspaceContent({
               {(section === "photo" || section === "video") && (
                 <MediaStudio key={section} kind={section} storeId={storeId} />
               )}
+              {section === "analytics" && (
+                <Analytics store={store} storeId={storeId} />
+              )}
               {section === "settings" && (
                 <SettingsPanel store={store} update={update} resetSeed={seed} />
               )}
@@ -300,9 +308,8 @@ function WorkspaceContent({
           )}
         </main>
         <footer>
-          AI Avito Seller{" "}
-          <span>Все данные демонстрационные · Авито не подключено</span>
-          <span>Версия 0.1</span>
+          Seller AI <span>Локальные данные · Авито не подключено</span>
+          <span>Версия 0.3</span>
         </footer>
       </div>
     </div>

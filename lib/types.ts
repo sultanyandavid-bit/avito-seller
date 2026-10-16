@@ -8,6 +8,7 @@ export const sections = [
   "listings",
   "photo",
   "video",
+  "analytics",
   "settings",
 ] as const;
 export type Section = (typeof sections)[number];
