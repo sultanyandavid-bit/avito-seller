@@ -1,4 +1,5 @@
 "use client";
+import Select from "../ui/select";
 import { useState } from "react";
 import { Plus, BookOpen } from "lucide-react";
 import type { KnowledgeProduct } from "@/lib/seller/types";
@@ -68,14 +69,14 @@ export default function Knowledge({
       <div className="seller-import-catalog">
         <label>
           Взять товар из существующего каталога
-          <select value={source} onChange={(e) => setSource(e.target.value)}>
+          <Select value={source} onChange={(e) => setSource(e.target.value)}>
             <option value="">Выберите товар…</option>
             {catalog.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.name}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
         <button
           className="button secondary"

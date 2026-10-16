@@ -1,4 +1,5 @@
 "use client";
+import Select from "../ui/select";
 import {
   criteria,
   providerLabels,
@@ -129,7 +130,7 @@ export default function Results({
               {criteria.map(([id, label]) => (
                 <label className="seller-rating" key={id}>
                   <span>{label}</span>
-                  <select
+                  <Select
                     disabled={!!r.error}
                     aria-label={`${label} — ${r.model.label}`}
                     value={r.review.scores[id] ?? ""}
@@ -146,7 +147,7 @@ export default function Results({
                         {n}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </label>
               ))}
               <label>

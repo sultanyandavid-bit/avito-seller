@@ -14,7 +14,7 @@ export function demoReply(
   settings: AISettings,
 ): Reply {
   const greeting =
-    settings.style === "business"
+    settings.style === "business" || settings.style === "expert"
       ? "Добрый день. "
       : settings.style === "brief"
         ? ""
@@ -55,7 +55,15 @@ export function demoReply(
       handoff: false,
     };
   if (/комплект|характер|состояни|аккумулятор|памят/i.test(question))
-    return { text: greeting + product.description, handoff: false };
+    return {
+      text:
+        greeting +
+        product.description +
+        (settings.style === "consultative"
+          ? " Что для вас важнее при выборе?"
+          : ""),
+      handoff: false,
+    };
   return {
     text: greeting + "Уточню этот вопрос у продавца, чтобы дать точный ответ.",
     handoff: true,

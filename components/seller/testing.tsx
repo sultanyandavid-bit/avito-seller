@@ -1,4 +1,5 @@
 "use client";
+import Select from "../ui/select";
 import { useState } from "react";
 import { Play, Upload, Plus, Sparkles, Check } from "lucide-react";
 import type {
@@ -98,7 +99,7 @@ export default function Testing({
         </div>
         <label>
           Товар из базы знаний
-          <select
+          <Select
             value={p?.id ?? ""}
             onChange={(e) => setProductId(e.target.value)}
           >
@@ -110,11 +111,11 @@ export default function Testing({
                 {p.name}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
         <label>
           Сценарий
-          <select
+          <Select
             aria-label="Сценарий"
             value={scenarioId}
             onChange={(e) => load(e.target.value)}
@@ -125,7 +126,7 @@ export default function Testing({
                 {s.name}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
         <label>
           Сообщение покупателя

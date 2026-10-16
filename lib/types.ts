@@ -33,7 +33,7 @@ export type Conversation = {
 };
 export type AISettings = {
   enabled: boolean;
-  style: "friendly" | "business" | "brief";
+  style: "friendly" | "business" | "brief" | "expert" | "consultative";
   instructions: string;
 };
 export type Store = {

@@ -11,7 +11,9 @@ export function parseStore(raw: string): Store | null {
       !Array.isArray(x.conversations) ||
       !x.ai ||
       typeof x.ai.enabled !== "boolean" ||
-      !["friendly", "business", "brief"].includes(x.ai.style) ||
+      !["friendly", "business", "brief", "expert", "consultative"].includes(
+        x.ai.style,
+      ) ||
       typeof x.ai.instructions !== "string"
     )
       return null;

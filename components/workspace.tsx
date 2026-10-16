@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import {
   LayoutDashboard,
@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   Menu,
   FlaskConical,
+  X,
 } from "lucide-react";
 import type { Section, Store } from "@/lib/types";
 import { initialStore } from "@/lib/demo";
@@ -22,6 +23,7 @@ import Messages from "./messages";
 import Assistant from "./assistant";
 import SettingsPanel from "./settings";
 import Seller from "./seller";
+import { useMobile } from "@/lib/client/use-mobile";
 const nav = [
   { id: "dashboard", label: "Обзор", icon: LayoutDashboard },
   { id: "products", label: "Товары", icon: Package },
@@ -66,13 +68,66 @@ export default function Workspace({ section }: { section: Section }) {
     }
   }, [store, ready]);
   /* eslint-enable react-hooks/set-state-in-effect */
+  const isMobile = useMobile();
+  const sidebarRef = useRef<HTMLElement>(null),
+    menuRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!mobile || !isMobile) return;
+    sidebarRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
+    const before = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = before;
+    };
+  }, [mobile, isMobile]);
+  const closeMenu = () => {
+    setMobile(false);
+    menuRef.current?.focus();
+  };
   const unread = store.conversations.reduce((n, c) => n + c.unread, 0),
     human = store.conversations.filter((c) => c.human).length;
   const update = (patch: Partial<Store>) =>
     setStore((s) => ({ ...s, ...patch }));
   return (
     <div className="app-shell">
-      <aside className={mobile ? "sidebar open" : "sidebar"}>
+      <a className="skip-link" href="#main-content">
+        Перейти к содержимому
+      </a>
+      <aside
+        id="workspace-navigation"
+        ref={sidebarRef}
+        inert={isMobile && !mobile}
+        onKeyDown={(e) => {
+          if (!mobile || !isMobile) return;
+          if (e.key === "Escape") {
+            e.preventDefault();
+            closeMenu();
+          }
+          if (e.key === "Tab") {
+            const nodes = sidebarRef.current?.querySelectorAll<HTMLElement>(
+              "a[href],button:not(:disabled),select",
+            );
+            if (!nodes?.length) return;
+            const first = nodes[0],
+              last = nodes[nodes.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+              e.preventDefault();
+              last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
+        }}
+        className={mobile ? "sidebar open" : "sidebar"}
+      >
+        <button
+          className="icon-button sidebar-close"
+          aria-label="Закрыть меню"
+          onClick={closeMenu}
+        >
+          <X size={21} />
+        </button>
         <Link href="/" className="brand">
           <span className="brand-icon">
             <Sparkles size={22} />
@@ -97,6 +152,7 @@ export default function Workspace({ section }: { section: Section }) {
               onClick={() => setMobile(false)}
               key={n.id}
               href={n.id === "dashboard" ? "/" : `/${n.id}`}
+              aria-current={section === n.id ? "page" : undefined}
               className={section === n.id ? "nav-item active" : "nav-item"}
             >
               <n.icon size={20} />
@@ -129,16 +185,19 @@ export default function Workspace({ section }: { section: Section }) {
       {mobile && (
         <button
           className="scrim"
-          aria-label="Закрыть меню"
-          onClick={() => setMobile(false)}
+          aria-label="Закрыть навигацию"
+          onClick={closeMenu}
         />
       )}
       <div className="main-shell">
         <header className="topbar">
           <div className="breadcrumb">
             <button
+              ref={menuRef}
               className="icon-button mobile-menu"
               aria-label="Открыть меню"
+              aria-controls="workspace-navigation"
+              aria-expanded={mobile}
               onClick={() => setMobile(!mobile)}
             >
               <Menu size={22} />
@@ -150,7 +209,7 @@ export default function Workspace({ section }: { section: Section }) {
             <span /> Демо-версия
           </span>
         </header>
-        <main>
+        <main id="main-content" tabIndex={-1}>
           {storageError && (
             <div role="alert" className="notice">
               {storageError}

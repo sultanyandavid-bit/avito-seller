@@ -1,4 +1,5 @@
 "use client";
+import Select from "./ui/select";
 import { useState } from "react";
 import { Plus, Search, Package, X } from "lucide-react";
 import type { Store, Product } from "@/lib/types";
@@ -253,7 +254,7 @@ function ProductEditor({
         <div className="form-grid">
           <label>
             Статус
-            <select
+            <Select
               value={p.status}
               onChange={(e) =>
                 patch({ status: e.target.value as Product["status"] })
@@ -262,11 +263,11 @@ function ProductEditor({
               <option value="active">Активно</option>
               <option value="draft">Черновик</option>
               <option value="archived">В архиве</option>
-            </select>
+            </Select>
           </label>
           <label>
             Иллюстрация
-            <select
+            <Select
               value={p.visual}
               onChange={(e) =>
                 patch({ visual: e.target.value as Product["visual"] })
@@ -277,7 +278,7 @@ function ProductEditor({
               <option value="laptop">Ноутбук</option>
               <option value="headphones">Наушники</option>
               <option value="camera">Камера</option>
-            </select>
+            </Select>
           </label>
         </div>
         <div className="modal-actions">
