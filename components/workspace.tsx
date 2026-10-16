@@ -10,6 +10,9 @@ import {
   Settings,
   ArrowUpRight,
   GraduationCap,
+  FileText,
+  Camera,
+  Film,
   ShieldCheck,
   Menu,
   FlaskConical,
@@ -38,6 +41,12 @@ import Select from "./ui/select";
 import { MAIN_STORE_ID, scopedKey } from "@/lib/workspaces/types";
 import { usePersistentState } from "@/lib/client/use-persistent-state";
 import { useMobile } from "@/lib/client/use-mobile";
+const Listings = dynamic(() => import("./listings"), {
+  loading: () => <p className="loading">Загружаем объявления…</p>,
+});
+const MediaStudio = dynamic(() => import("./media/studio"), {
+  loading: () => <p className="loading">Загружаем студию…</p>,
+});
 const nav = [
   { id: "dashboard", label: "Обзор", icon: LayoutDashboard },
   { id: "products", label: "Товары", icon: Package },
@@ -45,6 +54,9 @@ const nav = [
   { id: "assistant", label: "AI-ассистент", icon: Sparkles },
   { id: "learning", label: "AI-ученик", icon: GraduationCap },
   { id: "seller", label: "AI-продавец", icon: FlaskConical },
+  { id: "listings", label: "AI-объявления", icon: FileText },
+  { id: "photo", label: "AI-фотостудия", icon: Camera },
+  { id: "video", label: "AI-видеостудия", icon: Film },
   { id: "settings", label: "Настройки", icon: Settings },
 ] as const;
 export default function Workspace({ section }: { section: Section }) {
@@ -274,6 +286,12 @@ function WorkspaceContent({
               )}
               {section === "seller" && (
                 <Seller store={store} storeId={storeId} />
+              )}
+              {section === "listings" && (
+                <Listings store={store} storeId={storeId} />
+              )}
+              {(section === "photo" || section === "video") && (
+                <MediaStudio key={section} kind={section} storeId={storeId} />
               )}
               {section === "settings" && (
                 <SettingsPanel store={store} update={update} resetSeed={seed} />
