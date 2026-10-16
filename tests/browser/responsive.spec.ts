@@ -7,17 +7,17 @@ test("shared selects and all existing pages fit required widths", async ({
   for (const width of widths) {
     await page.setViewportSize({ width, height: 950 });
     for (const url of [
-      "/",
+      "/legacy/dashboard",
       "/products",
-      "/messages",
+      "/legacy/messages",
       "/assistant",
       "/seller",
       "/learning",
-      "/listings",
+      "/legacy/listings",
       "/photo",
       "/video",
       "/analytics",
-      "/settings",
+      "/legacy/settings",
     ]) {
       await page.goto(url);
       await expect(page.locator("main h1")).toBeVisible();

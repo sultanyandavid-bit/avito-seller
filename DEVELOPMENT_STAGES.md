@@ -1,3 +1,5 @@
+> Исторический отчёт Seller AI до задачи DAVIO. Актуальная реализация: `README.md`, `docs/DAVIO_STATUS.md`, `VERIFICATION.md`.
+
 # Последовательное развитие Seller AI
 
 ## Этап 1 — UI/UX и мобильный интерфейс

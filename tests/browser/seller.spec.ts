@@ -178,7 +178,7 @@ test("lab handles API failure and malformed saved data without affecting existin
   await expect(
     page.getByRole("button", { name: "Запустить демосравнение" }),
   ).toBeEnabled();
-  await page.goto("/messages");
+  await page.goto("/legacy/messages");
   await expect(
     page.getByRole("heading", { name: "Сообщения", exact: true }),
   ).toBeVisible();

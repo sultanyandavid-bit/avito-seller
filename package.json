@@ -9,13 +9,16 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "node --import tsx --test tests/*.test.ts",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "worker": "node --env-file-if-exists=.env.local --import tsx scripts/davio-worker.ts",
+    "admin": "node --env-file-if-exists=.env.local --import tsx scripts/davio-admin.ts"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
     "next": "^16.0.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "sharp": "0.35.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",
@@ -28,5 +31,8 @@
     "tailwindcss": "^4.1.0",
     "tsx": "^4.20.0",
     "typescript": "^5.9.0"
+  },
+  "engines": {
+    "node": ">=24.0.0 <25"
   }
 }

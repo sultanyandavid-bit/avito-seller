@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Menu,
   FlaskConical,
+  ArrowLeft,
   X,
 } from "lucide-react";
 import type { Section, Store } from "@/lib/types";
@@ -180,8 +181,8 @@ function WorkspaceContent({
             <Sparkles size={22} />
           </span>
           <span>
-            seller<span className="brand-ai">ai</span>
-            <small>ПРОДАВАЙТЕ УМНЕЕ</small>
+            DAVIO
+            <small>ЛОКАЛЬНЫЕ ИНСТРУМЕНТЫ</small>
           </span>
         </Link>
         <div className="shop-picker">
@@ -202,20 +203,40 @@ function WorkspaceContent({
         </div>
         <div className="nav-label">УПРАВЛЕНИЕ</div>
         <nav>
-          {nav.map((n) => (
+          {[
+            {
+              id: "dashboard",
+              label: "Главная",
+              href: "/",
+              icon: LayoutDashboard,
+            },
+            {
+              id: "listings",
+              label: "Объявления",
+              href: "/listings",
+              icon: FileText,
+            },
+            {
+              id: "messages",
+              label: "Сообщения",
+              href: "/messages",
+              icon: MessagesSquare,
+            },
+            {
+              id: "settings",
+              label: "Настройки",
+              href: "/settings",
+              icon: Settings,
+            },
+          ].map((n) => (
             <Link
-              onClick={() => setMobile(false)}
               key={n.id}
-              href={n.id === "dashboard" ? "/" : `/${n.id}`}
-              aria-current={section === n.id ? "page" : undefined}
-              className={section === n.id ? "nav-item active" : "nav-item"}
+              href={n.href}
+              className="nav-item"
+              onClick={() => setMobile(false)}
             >
               <n.icon size={20} />
               {n.label}
-              {n.id === "messages" && unread > 0 && (
-                <b className="count">{unread}</b>
-              )}
-              {n.id === "assistant" && <span className="ai-tag">AI</span>}
             </Link>
           ))}
         </nav>
@@ -270,6 +291,33 @@ function WorkspaceContent({
               {storageError || registry.error}
             </div>
           )}
+          <details className="seller-details" style={{ marginBottom: 24 }}>
+            <summary>Прежние локальные инструменты · данные браузера</summary>
+            <p>
+              Эти данные не привязаны к аккаунту DAVIO и остаются в этом
+              браузере.
+            </p>
+            <div className="chat-actions">
+              {nav.map((n) => (
+                <Link
+                  className="button secondary"
+                  key={n.id}
+                  href={`/legacy/${n.id}`}
+                  aria-current={section === n.id ? "page" : undefined}
+                >
+                  {n.label}
+                </Link>
+              ))}
+            </div>
+          </details>
+          <Link
+            className="text-link"
+            href="/settings"
+            style={{ marginBottom: 20 }}
+          >
+            <ArrowLeft size={16} />
+            Вернуться в DAVIO
+          </Link>
           {!ready ? (
             <div className="loading">Загружаем рабочее пространство…</div>
           ) : (
@@ -308,8 +356,8 @@ function WorkspaceContent({
           )}
         </main>
         <footer>
-          Seller AI <span>Локальные данные · Авито не подключено</span>
-          <span>Версия 0.3</span>
+          DAVIO <span>Локальные данные · Авито не подключено</span>
+          <span>Локальные инструменты</span>
         </footer>
       </div>
     </div>

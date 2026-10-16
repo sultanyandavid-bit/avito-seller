@@ -1,0 +1,67 @@
+# DAVIO — изменённые и добавленные файлы
+
+Относительно исходного коммита `2cc257d`. Файлов: 61. Удалённых файлов нет.
+
+Группы: интерфейс и маршруты DAVIO, серверное хранение/авторизация, обработка и очередь, PWA, тесты, документация. Прежние реализации сохранены; основные новые маршруты дополняются доступом к прежним через `/legacy`.
+
+- `.env.example`
+- `.gitignore`
+- `DEVELOPMENT_STAGES.md`
+- `PREVIEW.md`
+- `README.md`
+- `VERIFICATION.md`
+- `app/admin/page.tsx`
+- `app/api/davio/[...path]/route.ts`
+- `app/davio.css`
+- `app/layout.tsx`
+- `app/legacy/[section]/page.tsx`
+- `app/listings/page.tsx`
+- `app/manifest.ts`
+- `app/messages/page.tsx`
+- `app/offline/page.tsx`
+- `app/page.tsx`
+- `app/projects/[id]/page.tsx`
+- `app/settings/page.tsx`
+- `components/davio/admin.tsx`
+- `components/davio/editor.tsx`
+- `components/davio/messages.tsx`
+- `components/davio/projects.tsx`
+- `components/davio/pwa.tsx`
+- `components/davio/settings.tsx`
+- `components/davio/shell.tsx`
+- `components/davio/theme.tsx`
+- `components/workspace.tsx`
+- `docs/CHANGE_REPORT.md`
+- `docs/DAVIO_FILES.md`
+- `docs/DAVIO_STATUS.md`
+- `docs/LEGACY_README.md`
+- `docs/SAAS_ARCHITECTURE.md`
+- `lib/davio/client.ts`
+- `lib/davio/content.ts`
+- `lib/davio/integrations.ts`
+- `lib/davio/server/auth.ts`
+- `lib/davio/server/db.ts`
+- `lib/davio/server/limits.ts`
+- `lib/davio/server/media.ts`
+- `lib/davio/server/projects.ts`
+- `lib/davio/server/video.ts`
+- `lib/davio/server/zip.ts`
+- `lib/davio/types.ts`
+- `package-lock.json`
+- `package.json`
+- `playwright.config.ts`
+- `public/apple-touch-icon.png`
+- `public/davio-icon.svg`
+- `public/icon-192.png`
+- `public/icon-512.png`
+- `public/icon-maskable.png`
+- `public/sw.js`
+- `scripts/davio-admin.ts`
+- `scripts/davio-worker.ts`
+- `tests/browser/content.spec.ts`
+- `tests/browser/davio.spec.ts`
+- `tests/browser/learning.spec.ts`
+- `tests/browser/responsive.spec.ts`
+- `tests/browser/seller.spec.ts`
+- `tests/browser/workspace.spec.ts`
+- `tests/davio.test.ts`

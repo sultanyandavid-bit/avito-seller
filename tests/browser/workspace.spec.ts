@@ -5,12 +5,12 @@ test("all sections render without horizontal overflow or runtime errors", async 
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   for (const [url, title] of [
-    ["/", "Хороший день для продаж"],
+    ["/legacy/dashboard", "Хороший день для продаж"],
     ["/products", "Товары"],
-    ["/messages", "Сообщения"],
+    ["/legacy/messages", "Сообщения"],
     ["/assistant", "AI-ассистент"],
     ["/seller", "AI-продавец"],
-    ["/settings", "Настройки"],
+    ["/legacy/settings", "Настройки"],
   ]) {
     await page.goto(url);
     await expect(
@@ -22,7 +22,7 @@ test("all sections render without horizontal overflow or runtime errors", async 
       ),
     ).toBeTruthy();
   }
-  await page.goto("/");
+  await page.goto("/legacy/dashboard");
   await expect(
     page.getByRole("heading", { name: "Хороший день для продаж" }),
   ).toBeVisible();
@@ -32,13 +32,8 @@ test("all sections render without horizontal overflow or runtime errors", async 
   });
   if (info.project.name === "mobile") {
     await page.getByRole("button", { name: "Открыть меню" }).click();
-    await page
-      .getByRole("navigation")
-      .getByRole("link", { name: "Товары" })
-      .click();
-    await expect(
-      page.getByRole("heading", { name: "Товары", exact: true }),
-    ).toBeVisible();
+    await page.getByRole("navigation").getByRole("link", {name:"Объявления"}).click();
+    await expect(page.getByRole("heading",{name:"Начнём с вашего пространства"})).toBeVisible();
   }
   expect(errors).toEqual([]);
 });
@@ -76,7 +71,7 @@ test("product creation, editing, persistence, deletion and orphan conversation",
   await dialog
     .getByRole("button", { name: "Удалить товар", exact: true })
     .click();
-  await page.goto("/messages");
+  await page.goto("/legacy/messages");
   await expect(
     page.getByText("Товар удалён из каталога. Переписка сохранена."),
   ).toBeVisible();
@@ -89,7 +84,7 @@ test("assistant preview, manual messages, human handoff and saved settings", asy
   await page.getByLabel("Вопрос покупателя").fill("Будет скидка?");
   await page.getByRole("button", { name: "Предпросмотр ответа" }).click();
   await expect(page.locator(".ai-response")).toContainText("ПЕРЕДАЧА ПРОДАВЦУ");
-  await page.goto("/messages");
+  await page.goto("/legacy/messages");
   await page.getByRole("button", { name: "Предложить ответ" }).click();
   await expect(page.locator(".reply-preview")).toBeVisible();
   await page.getByRole("button", { name: "Вставить в поле ответа" }).click();
@@ -105,7 +100,7 @@ test("assistant preview, manual messages, human handoff and saved settings", asy
   await expect(
     page.getByRole("button", { name: "Снять передачу" }),
   ).toBeVisible();
-  await page.goto("/settings");
+  await page.goto("/legacy/settings");
   await page.getByLabel("Название магазина").fill("Мой магазин");
   await page.getByRole("button", { name: "Сохранить настройки" }).click();
   await page.reload();
@@ -133,7 +128,7 @@ test("corrupt storage falls back safely and no external integration is called", 
   await page.addInitScript(() =>
     localStorage.setItem("ai-avito-seller:v1", '{"version":1,"products":null}'),
   );
-  await page.goto("/settings");
+  await page.goto("/legacy/settings");
   await expect(
     page
       .getByRole("alert")

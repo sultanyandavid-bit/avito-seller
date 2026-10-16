@@ -61,7 +61,7 @@ test("local stores isolate products, conversations, learning and seller knowledg
     .first()
     .getByRole("button", { name: "Одобрить ответ", exact: true })
     .click();
-  await page.goto("/settings");
+  await page.goto("/legacy/settings");
   await page.getByLabel("Название нового магазина").fill("Второй магазин");
   await page
     .getByRole("button", { name: "Добавить магазин", exact: true })
@@ -71,7 +71,7 @@ test("local stores isolate products, conversations, learning and seller knowledg
   ).toHaveValue("Второй магазин");
   await page.goto("/products");
   await expect(page.locator("article")).toHaveCount(0);
-  await page.goto("/messages");
+  await page.goto("/legacy/messages");
   await expect(
     page.getByText("Выберите диалог", { exact: true }),
   ).toBeVisible();

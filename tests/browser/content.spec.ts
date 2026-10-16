@@ -6,7 +6,7 @@ const png = Buffer.from(
 test("listing templates, manual editing and saved drafts work", async ({
   page,
 }) => {
-  await page.goto("/listings");
+  await page.goto("/legacy/listings");
   await page.getByRole("button", { name: "Новое объявление" }).click();
   await page.getByLabel("Товар для объявления").selectOption("p1");
   await page.getByLabel("Подтверждённые характеристики").fill("Память 256 ГБ");
